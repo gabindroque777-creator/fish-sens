@@ -1,0 +1,2572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#071b17">
+<title>Fish Sens — Analyse intelligente de pêche</title>
+
+<style>
+:root{
+  --bg:#061511;
+  --bg2:#0a211b;
+  --card:#0d2921;
+  --line:#1d5143;
+  --green:#42d29a;
+  --green2:#2ba979;
+  --text:#f3faf7;
+  --muted:#9abdb2;
+  --gold:#e6c766;
+  --red:#e87373;
+  --shadow:0 20px 60px rgba(0,0,0,.35)
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+ margin:0;
+ font-family:Inter,Arial,sans-serif;
+ background:
+ radial-gradient(circle at 15% 0%,rgba(48,180,135,.14),transparent 30%),
+ radial-gradient(circle at 90% 15%,rgba(34,119,98,.12),transparent 30%),
+ var(--bg);
+ color:var(--text)
+}
+
+button,input,select{font:inherit}
+button{cursor:pointer}
+.container{width:min(1120px,92%);margin:auto}
+
+header{
+ padding:22px 0;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:20px
+}
+
+.brand{
+ display:flex;
+ align-items:center;
+ gap:12px;
+ font-weight:900;
+ font-size:22px
+}
+
+.brand-icon{
+ width:44px;height:44px;
+ display:grid;place-items:center;
+ border-radius:14px;
+ background:linear-gradient(135deg,#2da979,#176b53);
+ box-shadow:0 10px 30px rgba(50,200,150,.2)
+}
+
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+.nav button{
+ border:1px solid transparent;
+ background:transparent;
+ color:var(--muted);
+ padding:9px 13px;
+ border-radius:10px
+}
+.nav button:hover{background:#0c2821;color:white}
+
+.hero{
+ min-height:600px;
+ margin-top:5px;
+ border:1px solid var(--line);
+ border-radius:32px;
+ overflow:hidden;
+ position:relative;
+ display:grid;
+ grid-template-columns:1.05fr .95fr;
+ background:
+ linear-gradient(90deg,rgba(5,20,16,.98) 0%,rgba(5,20,16,.88) 48%,rgba(5,20,16,.25) 100%),
+ radial-gradient(circle at 78% 45%,#23634e 0,#102e26 28%,#071a16 65%);
+ box-shadow:var(--shadow)
+}
+
+.hero-content{
+ position:relative;
+ z-index:2;
+ padding:75px 55px;
+ align-self:center
+}
+
+.eyebrow{
+ color:var(--green);
+ font-weight:800;
+ letter-spacing:1.5px;
+ text-transform:uppercase;
+ font-size:13px
+}
+
+.hero h1{
+ margin:14px 0;
+ font-size:clamp(42px,7vw,76px);
+ line-height:.98;
+ letter-spacing:-3px
+}
+
+.hero h1 span{color:var(--green)}
+
+.hero p{
+ color:#b2ccc4;
+ font-size:18px;
+ line-height:1.65;
+ max-width:620px
+}
+
+.hero-actions{
+ display:flex;
+ gap:12px;
+ flex-wrap:wrap;
+ margin-top:28px
+}
+
+.primary{
+ border:0;
+ padding:16px 22px;
+ border-radius:14px;
+ background:linear-gradient(135deg,#43d49c,#27966f);
+ color:#03140f;
+ font-weight:900;
+ box-shadow:0 12px 35px rgba(50,210,150,.2)
+}
+
+.secondary{
+ border:1px solid #2b6555;
+ padding:15px 21px;
+ border-radius:14px;
+ background:rgba(10,35,29,.8);
+ color:white;
+ font-weight:800
+}
+
+/* IMAGE HERO */
+.hero-visual{
+ position:relative;
+ min-height:500px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ overflow:hidden
+}
+
+.hero-photo{
+ width:92%;
+ height:82%;
+ object-fit:cover;
+ border-radius:24px;
+ opacity:.94;
+ filter:saturate(.9) contrast(1.05);
+ box-shadow:0 25px 60px rgba(0,0,0,.55);
+ border:1px solid rgba(90,190,150,.25)
+}
+
+.hero-photo-overlay{
+ position:absolute;
+ inset:9%;
+ border-radius:24px;
+ background:linear-gradient(90deg,rgba(5,20,16,.15),rgba(5,20,16,0) 60%,rgba(5,20,16,.25))
+}
+
+.features{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:15px;
+ margin:22px 0
+}
+
+.feature{
+ padding:23px;
+ border:1px solid var(--line);
+ background:linear-gradient(145deg,#0c2820,#091e19);
+ border-radius:18px
+}
+
+.feature-icon{font-size:27px}
+.feature h3{margin:12px 0 7px}
+.feature p{color:var(--muted);line-height:1.5;margin:0}
+
+#app{display:none;padding-bottom:70px}
+
+.section-title{margin:48px 0 18px}
+.section-title h2{font-size:30px;margin:0 0 7px}
+.section-title p{color:var(--muted);margin:0}
+
+.card{
+ background:linear-gradient(145deg,var(--card),#0a211b);
+ border:1px solid var(--line);
+ border-radius:20px;
+ padding:23px;
+ margin:16px 0;
+ box-shadow:0 12px 40px rgba(0,0,0,.14)
+}
+
+.card h2{margin:0 0 18px}
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:16px
+}
+
+.field{margin-bottom:16px}
+
+label{
+ display:block;
+ color:#c1ded6;
+ font-weight:700;
+ margin-bottom:7px
+}
+
+input,select{
+ width:100%;
+ padding:13px 14px;
+ border:1px solid #2a6252;
+ background:#061a15;
+ color:white;
+ border-radius:11px;
+ outline:none
+}
+
+input:focus,select:focus{border-color:var(--green)}
+.full{grid-column:1/-1}
+
+.status{
+ min-height:23px;
+ color:var(--muted);
+ text-align:center;
+ margin-top:12px
+}
+
+.success{color:#67dfa9!important}
+.error{color:#ee8585!important}
+
+.auto-grid{
+ display:grid;
+ grid-template-columns:repeat(5,1fr);
+ gap:10px
+}
+
+.auto{
+ background:#091e19;
+ border:1px solid #17473b;
+ padding:14px 10px;
+ border-radius:13px;
+ text-align:center
+}
+
+.auto small{display:block;color:var(--muted);margin-bottom:5px}
+.auto strong{font-size:14px}
+
+.score-card{text-align:center;padding:35px 20px}
+
+.score-ring{
+ width:170px;height:170px;
+ border-radius:50%;
+ margin:15px auto;
+ display:grid;
+ place-items:center;
+ background:conic-gradient(var(--green) var(--score),#163a30 0);
+ position:relative
+}
+
+.score-ring::after{
+ content:"";
+ position:absolute;
+ width:135px;height:135px;
+ border-radius:50%;
+ background:#0b251e
+}
+
+.score-number{
+ position:relative;
+ z-index:2;
+ font-size:39px;
+ font-weight:900
+}
+
+.score-label{color:var(--muted)}
+
+.reason{
+ padding:13px;
+ margin:8px 0;
+ border-radius:11px;
+ background:#092019;
+ border-left:4px solid var(--green)
+}
+
+.lure{
+ border:1px solid #205447;
+ background:#091f19;
+ padding:18px;
+ border-radius:15px;
+ margin:12px 0
+}
+
+.lure-top{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:15px
+}
+
+.lure-title{font-size:20px;font-weight:900}
+.rank{color:var(--gold);font-size:23px}
+
+.tags{
+ display:flex;
+ flex-wrap:wrap;
+ gap:7px;
+ margin:10px 0
+}
+
+.tag{
+ padding:6px 9px;
+ background:#143a30;
+ color:#b8ddd2;
+ border-radius:8px;
+ font-size:13px
+}
+
+.equipment{
+ background:#0c2b23;
+ border:1px solid #225949;
+ border-radius:13px;
+ padding:15px;
+ margin-top:13px
+}
+
+.equipment-title{
+ color:var(--green);
+ font-weight:900;
+ margin-bottom:9px
+}
+
+.forecast{
+ padding:16px;
+ border:1px solid #1b493c;
+ border-left:4px solid var(--green2);
+ background:#091f19;
+ border-radius:12px;
+ margin:10px 0
+}
+
+.forecast.best{
+ border-left-color:var(--gold);
+ background:#102a20
+}
+
+.forecast-time{font-weight:900;font-size:18px}
+
+.catch-list{display:grid;gap:10px}
+
+.catch{
+ padding:15px;
+ border:1px solid #1b493c;
+ background:#091f19;
+ border-radius:14px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:15px
+}
+
+.catch-left{
+ display:flex;
+ align-items:center;
+ gap:14px;
+ min-width:0
+}
+
+.catch-info{min-width:0}
+
+.catch-photo{
+ width:82px;
+ height:82px;
+ flex:none;
+ object-fit:cover;
+ border-radius:12px;
+ border:1px solid #2a6252;
+ cursor:pointer;
+ transition:.2s;
+ background:#061a15
+}
+
+.catch-photo:hover{
+ transform:scale(1.04);
+ border-color:var(--green)
+}
+
+.catch small{color:var(--muted)}
+
+.location-box{
+ border:1px solid #2b705d;
+ background:linear-gradient(145deg,#0a2720,#081d18)
+}
+
+.coordinates{
+ padding:12px;
+ background:#071a15;
+ border-radius:10px;
+ color:#9bcfc0;
+ font-family:monospace;
+ margin-top:10px
+}
+
+.action{
+ width:100%;
+ border:0;
+ padding:15px;
+ border-radius:12px;
+ background:linear-gradient(135deg,#3ecb94,#258f69);
+ color:#03150f;
+ font-weight:900
+}
+
+.action.secondary{
+ background:#102e26;
+ color:white;
+ border:1px solid #2a6252
+}
+
+.danger{
+ background:#421d1d!important;
+ color:#ffb4b4!important;
+ border-color:#723737!important
+}
+
+/* PHOTO INPUT */
+.photo-upload{
+ border:1px dashed #337966;
+ background:#081d18;
+ padding:18px;
+ border-radius:14px;
+ text-align:center;
+ margin-top:8px
+}
+
+.photo-upload input{
+ border:0;
+ background:transparent;
+ padding:8px
+}
+
+.photo-preview{
+ display:none;
+ margin-top:12px;
+ position:relative;
+ width:130px
+}
+
+.photo-preview img{
+ width:130px;
+ height:130px;
+ object-fit:cover;
+ border-radius:14px;
+ border:1px solid #2b705d
+}
+
+.remove-photo{
+ position:absolute;
+ right:-8px;
+ top:-8px;
+ width:28px;
+ height:28px;
+ border:0;
+ border-radius:50%;
+ background:#6b2828;
+ color:white;
+ font-weight:900
+}
+
+/* FULLSCREEN IMAGE */
+.image-viewer{
+ display:none;
+ position:fixed;
+ inset:0;
+ z-index:999;
+ background:rgba(0,0,0,.92);
+ backdrop-filter:blur(8px);
+ align-items:center;
+ justify-content:center;
+ padding:25px
+}
+
+.image-viewer img{
+ max-width:95vw;
+ max-height:90vh;
+ object-fit:contain;
+ border-radius:12px;
+ box-shadow:0 20px 80px rgba(0,0,0,.7)
+}
+
+.image-close{
+ position:fixed;
+ right:22px;
+ top:20px;
+ width:45px;
+ height:45px;
+ border:0;
+ border-radius:12px;
+ background:#18372f;
+ color:white;
+ font-size:22px;
+ z-index:1000
+}
+
+.modal{
+ display:none;
+ position:fixed;
+ inset:0;
+ z-index:100;
+ background:rgba(0,0,0,.72);
+ backdrop-filter:blur(8px);
+ padding:20px;
+ overflow:auto
+}
+
+.modal-box{
+ width:min(650px,100%);
+ margin:70px auto;
+ background:#0c2821;
+ border:1px solid #2a6252;
+ border-radius:22px;
+ padding:25px
+}
+
+.modal-head{
+ display:flex;
+ justify-content:space-between;
+ align-items:center
+}
+
+.close{
+ background:#17382f;
+ color:white;
+ border:0;
+ width:38px;
+ height:38px;
+ border-radius:10px
+}
+
+footer{
+ padding:40px 0;
+ text-align:center;
+ color:#658e83
+}
+
+@media(max-width:800px){
+ .hero{grid-template-columns:1fr}
+ .hero-content{padding:55px 28px 25px}
+ .hero-visual{min-height:330px}
+ .hero-photo{height:280px;width:90%}
+ .features{grid-template-columns:1fr}
+ .grid{grid-template-columns:1fr}
+ .auto-grid{grid-template-columns:repeat(2,1fr)}
+ .nav{display:none}
+}
+
+@media(max-width:500px){
+ .hero h1{letter-spacing:-2px}
+ .auto-grid{grid-template-columns:1fr 1fr}
+ .card{padding:17px}
+ .catch-photo{width:70px;height:70px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+ <div class="brand">
+  <div class="brand-icon">🎣</div>
+  <span>Fish Sens</span>
+ </div>
+
+ <div class="nav">
+  <button onclick="go('analyse')">Analyse</button>
+  <button onclick="go('previsions')">Prévisions</button>
+  <button onclick="go('carnet')">Carnet</button>
+  <button onclick="openModal('aide')">Aide</button>
+ </div>
+</header>
+
+<section id="home">
+
+ <div class="hero">
+
+  <div class="hero-content">
+   <div class="eyebrow">L'assistant du pêcheur</div>
+
+   <h1>
+    Pêche plus<br>
+    <span>intelligemment.</span>
+   </h1>
+
+   <p>
+    Fish Sens analyse les conditions de ta session,
+    la météo, ton spot, l'espèce recherchée et ton
+    matériel pour t'aider à choisir la meilleure stratégie.
+   </p>
+
+   <div class="hero-actions">
+    <button class="primary" onclick="startApp()">
+     🎣 Analyser ma session
+    </button>
+
+    <button class="secondary" onclick="openModal('fonctionnement')">
+     Comment ça marche ?
+    </button>
+   </div>
+  </div>
+
+  <div class="hero-visual">
+   <!--
+      Tu peux remplacer l'URL ci-dessous par ta propre photo
+      d'un pêcheur tenant un brochet.
+   -->
+   <img
+    class="hero-photo"
+    src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1000&q=85"
+    alt="Pêcheur au bord de l'eau"
+   >
+   <div class="hero-photo-overlay"></div>
+  </div>
+
+ </div>
+
+ <div class="features">
+
+  <div class="feature">
+   <div class="feature-icon">🌦️</div>
+   <h3>Météo réelle</h3>
+   <p>
+    Récupère les conditions météo à ta position
+    lorsque la localisation est disponible.
+   </p>
+  </div>
+
+  <div class="feature">
+   <div class="feature-icon">🧠</div>
+   <h3>Analyse intelligente</h3>
+   <p>
+    Un score de session et des recommandations
+    adaptées à l'espèce recherchée.
+   </p>
+  </div>
+
+  <div class="feature">
+   <div class="feature-icon">🎣</div>
+   <h3>Stratégie</h3>
+   <p>
+    Leurres, animations, zones à prospecter
+    et compatibilité avec ton matériel.
+   </p>
+  </div>
+
+ </div>
+</section>
+
+<section id="app">
+
+ <div class="section-title">
+  <h2>🎣 Analyse de ta session</h2>
+  <p>Renseigne les conditions ou utilise les données automatiques.</p>
+ </div>
+
+ <div class="card">
+  <h2>📅 Session</h2>
+
+  <div class="auto-grid">
+
+   <div class="auto">
+    <small>Date</small>
+    <strong id="dateAuto">--</strong>
+   </div>
+
+   <div class="auto">
+    <small>Heure</small>
+    <strong id="heureAuto">--</strong>
+   </div>
+
+   <div class="auto">
+    <small>Moment</small>
+    <strong id="momentAuto">--</strong>
+   </div>
+
+   <div class="auto">
+    <small>Saison</small>
+    <strong id="saisonAuto">--</strong>
+   </div>
+
+   <div class="auto">
+    <small>Lune</small>
+    <strong id="luneAuto">--</strong>
+   </div>
+
+  </div>
+
+  <p style="color:var(--muted);font-size:13px">
+   ℹ️ Ces informations suivent automatiquement la date et l'heure actuelles.
+  </p>
+ </div>
+
+ <div class="card location-box">
+
+  <h2>📍 Localisation</h2>
+
+  <p style="color:var(--muted)">
+   Fish Sens peut utiliser la localisation de ton navigateur
+   pour récupérer les conditions météo autour de toi.
+  </p>
+
+  <button class="action" onclick="localiser()">
+   📍 Utiliser ma position
+  </button>
+
+  <div id="locationStatus" class="status">
+   Localisation non activée.
+  </div>
+
+  <div id="locationDetails"></div>
+ </div>
+
+ <div class="card" id="analyse">
+
+  <h2>🎣 Ton spot</h2>
+
+  <div class="grid">
+
+   <div class="field">
+    <label>Lieu</label>
+    <input id="lieu" placeholder="Ex : rivière du Gier">
+   </div>
+
+   <div class="field">
+    <label>Type de spot</label>
+    <select id="spot">
+     <option value="riviere">🏞️ Rivière</option>
+     <option value="lac">🌊 Lac</option>
+     <option value="etang">🎣 Étang</option>
+     <option value="canal">🚤 Canal</option>
+     <option value="fleuve">🌊 Fleuve</option>
+    </select>
+   </div>
+
+   <div class="field">
+    <label>Clarté de l'eau</label>
+    <select id="clarte">
+     <option value="claire">💎 Claire</option>
+     <option value="moyenne">💧 Moyenne</option>
+     <option value="trouble">🟤 Trouble</option>
+    </select>
+   </div>
+
+   <div class="field">
+    <label>Profondeur</label>
+    <select id="profondeur">
+     <option value="faible">📏 Moins de 1 m</option>
+     <option value="moyenne">📏 1 à 3 m</option>
+     <option value="profonde">📏 3 à 6 m</option>
+     <option value="tresprofonde">📏 Plus de 6 m</option>
+    </select>
+   </div>
+
+   <div class="field">
+    <label>Courant</label>
+    <select id="courant">
+     <option value="aucun">〰️ Aucun / très faible</option>
+     <option value="faible">〰️ Faible</option>
+     <option value="moyen">🌊 Moyen</option>
+     <option value="fort">🌊 Fort</option>
+    </select>
+   </div>
+
+  </div>
+ </div>
+
+ <div class="card">
+
+  <h2>🌦️ Conditions</h2>
+
+  <div class="grid">
+
+   <div class="field">
+    <label>Température de l'eau °C</label>
+    <input id="temperature" type="number" placeholder="Ex : 18">
+   </div>
+
+   <div class="field">
+    <label>Vent km/h</label>
+    <input id="vent" type="number" placeholder="Ex : 12">
+   </div>
+
+   <div class="field">
+    <label>Pression hPa</label>
+    <input id="pression" type="number" placeholder="Ex : 1015">
+   </div>
+
+   <div class="field">
+    <label>Ciel</label>
+    <select id="meteo">
+     <option value="soleil">☀️ Ensoleillé</option>
+     <option value="nuageux">⛅ Nuageux</option>
+     <option value="pluie">🌧️ Pluie</option>
+     <option value="orage">⛈️ Orage</option>
+    </select>
+   </div>
+
+  </div>
+
+  <button class="secondary" onclick="weatherManual()">
+   🌦️ Actualiser la météo
+  </button>
+
+  <div id="weatherStatus" class="status"></div>
+ </div>
+
+ <div class="card">
+
+  <h2>🐟 Espèce recherchée</h2>
+
+  <div class="grid">
+
+   <div class="field">
+    <label>Poisson</label>
+    <select id="poisson">
+     <option value="brochet">🐊 Brochet</option>
+     <option value="sandre">🐟 Sandre</option>
+     <option value="perche">🐠 Perche</option>
+     <option value="carpe">🎣 Carpe</option>
+     <option value="silure">🐋 Silure</option>
+     <option value="truite">🏞️ Truite</option>
+    </select>
+   </div>
+
+   <div class="field">
+    <label>Puissance de ta canne</label>
+    <select id="puissanceCanne">
+     <option value="">Je ne sais pas</option>
+     <option value="1-5">1–5 g</option>
+     <option value="2-10">2–10 g</option>
+     <option value="3-15">3–15 g</option>
+     <option value="5-21">5–21 g</option>
+     <option value="7-28">7–28 g</option>
+     <option value="10-30">10–30 g</option>
+     <option value="10-40">10–40 g</option>
+     <option value="20-50">20–50 g</option>
+     <option value="40-80">40–80 g</option>
+     <option value="50-100">50–100 g</option>
+     <option value="80-150">80–150 g</option>
+     <option value="100-200">100–200 g</option>
+     <option value="150-300">150–300 g</option>
+    </select>
+   </div>
+
+  </div>
+
+  <button class="action" onclick="analyser()">
+   🎯 Analyser ma session
+  </button>
+
+  <br><br>
+
+  <button class="action secondary" onclick="previsions()">
+   🔮 Prévisions des 24 prochaines heures
+  </button>
+
+ </div>
+
+ <div id="resultat"></div>
+
+ <!-- CARNET -->
+ <div class="card" id="carnet">
+
+  <h2>📖 Carnet de pêche</h2>
+
+  <div class="grid">
+
+   <div class="field">
+    <label>Espèce capturée</label>
+    <input id="prisePoisson" placeholder="Ex : Perche">
+   </div>
+
+   <div class="field">
+    <label>Taille en cm</label>
+    <input id="priseTaille" type="number" placeholder="Ex : 32">
+   </div>
+
+   <div class="field full">
+    <label>Note</label>
+    <input id="priseNote" placeholder="Leurre, endroit, conditions...">
+   </div>
+
+   <div class="field full">
+
+    <label>📸 Photo de la prise</label>
+
+    <div class="photo-upload">
+
+     <p style="color:var(--muted);margin-top:0">
+      Ajoute une photo de ton poisson.
+      Sur téléphone, ton appareil pourra proposer
+      la caméra ou ta galerie selon ton appareil.
+     </p>
+
+     <input
+      id="prisePhoto"
+      type="file"
+      accept="image/*"
+      capture="environment"
+      onchange="previsualiserPhoto(event)"
+     >
+
+     <div id="photoPreview" class="photo-preview">
+      <img id="photoPreviewImg" alt="Aperçu de la prise">
+      <button
+       type="button"
+       class="remove-photo"
+       onclick="retirerPhoto()"
+      >✕</button>
+     </div>
+
+    </div>
+
+   </div>
+
+  </div>
+
+  <button class="action" onclick="ajouterPrise()">
+   ➕ Ajouter la prise
+  </button>
+
+  <div id="catchList" class="catch-list" style="margin-top:16px"></div>
+
+ </div>
+
+</section>
+
+<footer>
+ Fish Sens 🎣 — Analyse, météo et stratégie pour préparer tes sessions.
+</footer>
+
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+
+ <div class="modal-box">
+
+  <div class="modal-head">
+   <h2 id="modalTitle">Fish Sens</h2>
+   <button class="close" onclick="closeModal()">✕</button>
+  </div>
+
+  <div id="modalContent"></div>
+
+ </div>
+</div>
+
+<!-- VISIONNEUSE PHOTO -->
+<div id="imageViewer" class="image-viewer" onclick="closeImageViewer(event)">
+ <button class="image-close" onclick="closeImageViewer()">✕</button>
+ <img id="fullImage" src="" alt="Photo de la prise">
+</div>
+
+<script>
+
+/* =====================================================
+   DONNÉES DES ESPÈCES
+===================================================== */
+
+const poissons={
+
+brochet:{
+ nom:"🐊 Brochet",
+ temp:[8,18],
+ spots:["riviere","lac","etang","canal","fleuve"],
+ moments:["matin","soir"],
+ clarte:["claire","moyenne","trouble"],
+ profondeur:["moyenne","profonde"],
+ courant:["faible","moyen"],
+ zones:["Herbiers","Bordures","Obstacles","Cassures","Zones de fourrage"],
+ leurres:[
+  {
+   nom:"Shad souple",
+   taille:"10–15 cm",
+   couleur:"Naturelle ou contrastée",
+   animation:"Lente à modérée",
+   zone:"Cassures, bordures et obstacles",
+   canne:"10–30 à 20–50 g",
+   grammage:"10–30 g",
+   moulinet:"2500–4000",
+   ligne:"Tresse 12–20/100",
+   bas:"Bas de ligne adapté au brochet"
+  },
+  {
+   nom:"Spinnerbait",
+   taille:"10–20 g",
+   couleur:"Naturelle ou contrastée",
+   animation:"Linéaire lent/modéré",
+   zone:"Herbiers et obstacles",
+   canne:"10–40 à 20–50 g",
+   grammage:"10–30 g",
+   moulinet:"2500–4000",
+   ligne:"Tresse 14–20/100",
+   bas:"Bas de ligne adapté au brochet"
+  },
+  {
+   nom:"Jerkbait",
+   taille:"10–15 cm",
+   couleur:"Naturelle",
+   animation:"Tirées + pauses",
+   zone:"Bordures",
+   canne:"15–40 à 30–60 g",
+   grammage:"15–40 g",
+   moulinet:"2500–4000",
+   ligne:"Tresse 14–20/100",
+   bas:"Bas de ligne adapté au brochet"
+  }
+ ]
+},
+
+sandre:{
+ nom:"🐟 Sandre",
+ temp:[10,20],
+ spots:["riviere","fleuve","lac","canal"],
+ moments:["soir","nuit"],
+ clarte:["trouble","moyenne"],
+ profondeur:["moyenne","profonde","tresprofonde"],
+ courant:["faible","moyen"],
+ zones:["Cassures","Fosses","Blocs","Zones profondes"],
+ leurres:[
+  {
+   nom:"Shad souple",
+   taille:"7–12 cm",
+   couleur:"Blanc, perle ou naturelle",
+   animation:"Lente près du fond",
+   zone:"Cassures et fosses",
+   canne:"7–28 à 10–30 g",
+   grammage:"7–25 g",
+   moulinet:"2500–3000",
+   ligne:"Tresse 8–14/100",
+   bas:"Fluorocarbone adapté"
+  },
+  {
+   nom:"Finess",
+   taille:"7–12 cm",
+   couleur:"Naturelle",
+   animation:"Très lente + pauses",
+   zone:"Zones profondes",
+   canne:"5–21 à 7–28 g",
+   grammage:"5–15 g",
+   moulinet:"2000–3000",
+   ligne:"Tresse 6–10/100",
+   bas:"Fluorocarbone adapté"
+  },
+  {
+   nom:"Shad sur tête plombée",
+   taille:"7–15 cm",
+   couleur:"À adapter à l'eau",
+   animation:"Grattage du fond",
+   zone:"Structures et cassures",
+   canne:"7–28 à 10–30 g",
+   grammage:"7–30 g",
+   moulinet:"2500–3000",
+   ligne:"Tresse 8–14/100",
+   bas:"Fluorocarbone adapté"
+  }
+ ]
+},
+
+perche:{
+ nom:"🐠 Perche",
+ temp:[12,22],
+ spots:["riviere","lac","etang","canal"],
+ moments:["matin","soir"],
+ clarte:["claire","moyenne"],
+ profondeur:["faible","moyenne"],
+ courant:["aucun","faible","moyen"],
+ zones:["Herbiers","Bordures","Structures","Zones d'alevins"],
+ leurres:[
+  {
+   nom:"Petit shad",
+   taille:"5–8 cm",
+   couleur:"Naturelle ou argentée",
+   animation:"Linéaire + petites pauses",
+   zone:"Bordures et herbiers",
+   canne:"2–10 à 3–15 g",
+   grammage:"2–10 g",
+   moulinet:"1000–2500",
+   ligne:"Tresse 6–10/100",
+   bas:"Fluorocarbone 18–25/100"
+  },
+  {
+   nom:"Cuillère",
+   taille:"2–10 g",
+   couleur:"Argentée ou dorée",
+   animation:"Linéaire régulier",
+   zone:"Courants et bordures",
+   canne:"2–10 à 10–20 g",
+   grammage:"2–10 g",
+   moulinet:"1000–2500",
+   ligne:"Nylon ou tresse fine",
+   bas:"Fluorocarbone"
+  },
+  {
+   nom:"Petit crankbait",
+   taille:"4–7 cm",
+   couleur:"Naturelle ou contrastée",
+   animation:"Linéaire + pauses",
+   zone:"Herbiers et structures",
+   canne:"3–12 à 5–15 g",
+   grammage:"3–12 g",
+   moulinet:"1000–2500",
+   ligne:"Tresse 6–10/100",
+   bas:"Fluorocarbone"
+  }
+ ]
+},
+
+carpe:{
+ nom:"🎣 Carpe",
+ temp:[16,25],
+ spots:["etang","lac","riviere"],
+ moments:["matin","soir"],
+ clarte:["moyenne","trouble"],
+ profondeur:["faible","moyenne","profonde"],
+ courant:["aucun","faible"],
+ zones:["Bordures","Zones d'alimentation","Herbiers","Cassures","Plateaux"],
+ leurres:[
+  {
+   nom:"Bouillette",
+   taille:"10–20 mm",
+   couleur:"À adapter au fond",
+   animation:"Statique",
+   zone:"Zone d'alimentation",
+   canne:"3–3,60 m — environ 2,5–3,5 lb",
+   grammage:"50–100 g selon montage",
+   moulinet:"5000–10000",
+   ligne:"Nylon 30–40/100",
+   bas:"Bas de ligne carpe adapté"
+  },
+  {
+   nom:"Maïs",
+   taille:"Quelques grains",
+   couleur:"Jaune naturel",
+   animation:"Statique",
+   zone:"Bordures et zones d'alimentation",
+   canne:"3–3,60 m — environ 2,5–3 lb",
+   grammage:"Selon montage",
+   moulinet:"5000–10000",
+   ligne:"Nylon 30–35/100",
+   bas:"Bas de ligne carpe adapté"
+  },
+  {
+   nom:"Pellets",
+   taille:"Selon amorçage",
+   couleur:"Naturelle",
+   animation:"Statique",
+   zone:"Zone amorcée",
+   canne:"3–3,60 m — environ 2,5–3,5 lb",
+   grammage:"Selon montage",
+   moulinet:"5000–10000",
+   ligne:"Nylon 30–40/100",
+   bas:"Bas de ligne carpe adapté"
+  }
+ ]
+},
+
+silure:{
+ nom:"🐋 Silure",
+ temp:[18,28],
+ spots:["riviere","fleuve","lac"],
+ moments:["soir","nuit"],
+ clarte:["trouble","moyenne"],
+ profondeur:["profonde","tresprofonde"],
+ courant:["moyen","fort"],
+ zones:["Fosses","Cassures","Courants","Obstacles","Sorties de fosses"],
+ leurres:[
+  {
+   nom:"Gros shad",
+   taille:"15–25 cm",
+   couleur:"Naturelle ou contrastée",
+   animation:"Lente à modérée",
+   zone:"Fosses et cassures",
+   canne:"100–200 g environ",
+   grammage:"40–150 g",
+   moulinet:"5000–10000",
+   ligne:"Tresse forte",
+   bas:"Montage résistant adapté"
+  },
+  {
+   nom:"Gros leurre souple",
+   taille:"15–25 cm",
+   couleur:"Contrastée en eau trouble",
+   animation:"Lente près du fond",
+   zone:"Sorties de fosses",
+   canne:"100–200 g ou plus",
+   grammage:"50–180 g",
+   moulinet:"5000–10000",
+   ligne:"Tresse forte",
+   bas:"Montage résistant adapté"
+  },
+  {
+   nom:"Poisson nageur",
+   taille:"15–20 cm",
+   couleur:"Naturelle ou contrastée",
+   animation:"Linéaire + pauses",
+   zone:"Courant et obstacles",
+   canne:"80–180 g",
+   grammage:"30–120 g",
+   moulinet:"5000–10000",
+   ligne:"Tresse forte",
+   bas:"Montage renforcé"
+  }
+ ]
+},
+
+truite:{
+ nom:"🏞️ Truite",
+ temp:[7,16],
+ spots:["riviere"],
+ moments:["matin","soir"],
+ clarte:["claire","moyenne"],
+ profondeur:["faible","moyenne"],
+ courant:["faible","moyen"],
+ zones:["Courants","Remous","Caches","Obstacles","Zones oxygénées"],
+ leurres:[
+  {
+   nom:"Petite cuillère",
+   taille:"1–5 g",
+   couleur:"Argentée ou dorée",
+   animation:"Régulière",
+   zone:"Courants et remous",
+   canne:"1/7 à 2/10 g",
+   grammage:"1–5 g",
+   moulinet:"1000–2000",
+   ligne:"Nylon fin",
+   bas:"Fluorocarbone fin"
+  },
+  {
+   nom:"Petit poisson nageur",
+   taille:"3–7 cm",
+   couleur:"Naturelle",
+   animation:"Lente à modérée",
+   zone:"Caches et bordures",
+   canne:"2–10 à 5–15 g",
+   grammage:"2–8 g",
+   moulinet:"1000–2000",
+   ligne:"Nylon fin",
+   bas:"Fluorocarbone fin"
+  },
+  {
+   nom:"Petit leurre souple",
+   taille:"3–7 cm",
+   couleur:"Naturelle",
+   animation:"Légère et discrète",
+   zone:"Courants lents",
+   canne:"1/7 à 5–15 g",
+   grammage:"1–7 g",
+   moulinet:"1000–2000",
+   ligne:"Tresse fine",
+   bas:"Fluorocarbone fin"
+  }
+ ]
+}
+
+};
+
+/* =====================================================
+ NAVIGATION
+===================================================== */
+
+function startApp(){
+ document.getElementById("home").style.display="none";
+ document.getElementById("app").style.display="block";
+ actualiserTemps();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function go(id){
+ if(document.getElementById("app").style.display!=="block"){
+  startApp();
+ }
+ setTimeout(()=>{
+  document.getElementById(id)?.scrollIntoView({behavior:"smooth"});
+ },100);
+}
+
+/* =====================================================
+ DATE / HEURE / LUNE
+===================================================== */
+
+function moment(){
+ const h=new Date().getHours();
+ if(h>=5&&h<11)return"matin";
+ if(h>=11&&h<18)return"journee";
+ if(h>=18&&h<23)return"soir";
+ return"nuit";
+}
+
+function momentTexte(){
+ const m=moment();
+ if(m==="matin")return"🌅 Matin";
+ if(m==="journee")return"☀️ Journée";
+ if(m==="soir")return"🌇 Soir";
+ return"🌙 Nuit";
+}
+
+function saison(){
+ const m=new Date().getMonth()+1;
+ if(m>=3&&m<=5)return"🌱 Printemps";
+ if(m>=6&&m<=8)return"☀️ Été";
+ if(m>=9&&m<=11)return"🍂 Automne";
+ return"❄️ Hiver";
+}
+
+function lune(date){
+ const ref=new Date("2000-01-06T18:14:00Z");
+ const diff=(date-ref)/(1000*60*60*24);
+ let phase=(diff/29.5305882)%1;
+ if(phase<0)phase+=1;
+
+ if(phase<.0625)return"🌑 Nouvelle lune";
+ if(phase<.1875)return"🌒 Premier croissant";
+ if(phase<.3125)return"🌓 Premier quartier";
+ if(phase<.4375)return"🌔 Gibbeuse croissante";
+ if(phase<.5625)return"🌕 Pleine lune";
+ if(phase<.6875)return"🌖 Gibbeuse décroissante";
+ if(phase<.8125)return"🌗 Dernier quartier";
+ if(phase<.9375)return"🌘 Dernier croissant";
+ return"🌑 Nouvelle lune";
+}
+
+function actualiserTemps(){
+ const d=new Date();
+
+ document.getElementById("dateAuto").textContent=
+  d.toLocaleDateString("fr-FR");
+
+ document.getElementById("heureAuto").textContent=
+  d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+
+ document.getElementById("momentAuto").textContent=momentTexte();
+ document.getElementById("saisonAuto").textContent=saison();
+ document.getElementById("luneAuto").textContent=lune(d);
+}
+
+actualiserTemps();
+setInterval(actualiserTemps,60000);
+
+/* =====================================================
+ LOCALISATION
+===================================================== */
+
+let latitude=null;
+let longitude=null;
+
+function localiser(){
+
+ const status=document.getElementById("locationStatus");
+
+ if(!navigator.geolocation){
+  status.className="status error";
+  status.textContent="❌ Ton navigateur ne prend pas en charge la géolocalisation.";
+  return;
+ }
+
+ status.className="status";
+ status.textContent="📍 Recherche de ta position...";
+
+ navigator.geolocation.getCurrentPosition(
+  async position=>{
+   latitude=position.coords.latitude;
+   longitude=position.coords.longitude;
+
+   status.className="status success";
+   status.textContent="✅ Position GPS obtenue.";
+
+   document.getElementById("locationDetails").innerHTML=`
+    <div class="coordinates">
+     Latitude : ${latitude.toFixed(5)}<br>
+     Longitude : ${longitude.toFixed(5)}
+    </div>
+   `;
+
+   await reverseGeocode();
+   await weatherFromLocation();
+  },
+
+  error=>{
+   status.className="status error";
+
+   if(error.code===1)
+    status.textContent="❌ Localisation refusée. Autorise-la dans ton navigateur.";
+   else if(error.code===2)
+    status.textContent="❌ Position impossible à déterminer.";
+   else if(error.code===3)
+    status.textContent="❌ La recherche a pris trop de temps. Réessaie.";
+   else
+    status.textContent="❌ Impossible de récupérer ta position.";
+  },
+
+  {
+   enableHighAccuracy:true,
+   timeout:20000,
+   maximumAge:0
+  }
+ );
+}
+
+/* =====================================================
+ REVERSE GEOCODING
+===================================================== */
+
+async function reverseGeocode(){
+
+ if(latitude===null)return;
+
+ try{
+
+  const url=
+   "https://nominatim.openstreetmap.org/reverse"+
+   "?format=json"+
+   "&lat="+encodeURIComponent(latitude)+
+   "&lon="+encodeURIComponent(longitude)+
+   "&zoom=18"+
+   "&addressdetails=1"+
+   "&accept-language=fr";
+
+  const response=await fetch(url);
+  if(!response.ok)throw new Error();
+
+  const data=await response.json();
+  const a=data.address||{};
+
+  const commune=
+   a.village||
+   a.town||
+   a.city||
+   a.municipality||
+   "Position détectée";
+
+  document.getElementById("lieu").value=commune;
+
+  document.getElementById("locationDetails").innerHTML+=`
+   <div style="margin-top:12px">
+    📍 <strong>${escapeHTML(commune)}</strong>
+    ${a.county?`<br>📌 ${escapeHTML(a.county)}`:""}
+    ${a.country?`<br>🌍 ${escapeHTML(a.country)}`:""}
+   </div>
+  `;
+
+ }catch(e){
+
+  document.getElementById("locationDetails").innerHTML+=`
+   <div class="status">
+    Position GPS obtenue, mais nom du lieu indisponible.
+   </div>
+  `;
+ }
+}
+
+/* =====================================================
+ METEO
+===================================================== */
+
+async function weatherFromLocation(){
+
+ if(latitude===null)return;
+
+ const status=document.getElementById("weatherStatus");
+
+ status.textContent="🌦️ Récupération de la météo...";
+
+ try{
+
+  const url=
+   "https://api.open-meteo.com/v1/forecast"+
+   "?latitude="+encodeURIComponent(latitude)+
+   "&longitude="+encodeURIComponent(longitude)+
+   "&current=temperature_2m,wind_speed_10m,pressure_msl,weather_code"+
+   "&wind_speed_unit=kmh"+
+   "&timezone=auto";
+
+  const response=await fetch(url);
+  if(!response.ok)throw new Error();
+
+  const data=await response.json();
+  const c=data.current;
+
+  document.getElementById("temperature").value=Math.round(c.temperature_2m);
+  document.getElementById("vent").value=Math.round(c.wind_speed_10m);
+  document.getElementById("pression").value=Math.round(c.pressure_msl);
+  document.getElementById("meteo").value=weatherCode(c.weather_code);
+
+  status.className="status success";
+  status.textContent="✅ Météo récupérée à ta position.";
+
+ }catch(e){
+
+  status.className="status error";
+  status.textContent="⚠️ Météo indisponible pour le moment.";
+ }
+}
+
+async function weatherManual(){
+
+ if(latitude===null){
+  document.getElementById("weatherStatus").textContent=
+   "📍 Utilise d'abord ta position.";
+  localiser();
+  return;
+ }
+
+ await weatherFromLocation();
+}
+
+function weatherCode(code){
+ if(code===0)return"soleil";
+ if(code>=1&&code<=3)return"nuageux";
+ if(code>=51&&code<=82)return"pluie";
+ if(code>=95)return"orage";
+ return"nuageux";
+}
+
+/* =====================================================
+ ANALYSE
+===================================================== */
+
+function analyser(){
+
+ actualiserTemps();
+
+ const profil=poissons[document.getElementById("poisson").value];
+
+ const temperature=Number(document.getElementById("temperature").value);
+ const vent=Number(document.getElementById("vent").value);
+ const pression=Number(document.getElementById("pression").value);
+
+ let score=0;
+ const raisons=[];
+
+ if(temperature>=profil.temp[0]&&temperature<=profil.temp[1]){
+  score+=25;
+  raisons.push("🌡️ Température très intéressante pour cette espèce.");
+ }else if(temperature>=profil.temp[0]-4&&temperature<=profil.temp[1]+5){
+  score+=17;
+  raisons.push("🌡️ Température exploitable.");
+ }else{
+  score+=5;
+  raisons.push("🌡️ Température moins favorable.");
+ }
+
+ const spot=document.getElementById("spot").value;
+
+ if(profil.spots.includes(spot)){
+  score+=15;
+  raisons.push("📍 Type de milieu adapté à l'espèce.");
+ }else{
+  score+=3;
+  raisons.push("📍 Milieu moins caractéristique de cette espèce.");
+ }
+
+ if(profil.moments.includes(moment())){
+  score+=15;
+  raisons.push("🕐 Moment intéressant pour cette espèce.");
+ }else{
+  score+=7;
+  raisons.push("🕐 Moment encore exploitable.");
+ }
+
+ if(vent>=3&&vent<=25){
+  score+=10;
+  raisons.push("💨 Vent intéressant.");
+ }else if(vent<=35){
+  score+=6;
+  raisons.push("💨 Vent acceptable.");
+ }else{
+  score+=2;
+  raisons.push("💨 Vent important.");
+ }
+
+ const profondeur=document.getElementById("profondeur").value;
+
+ if(profil.profondeur.includes(profondeur)){
+  score+=10;
+  raisons.push("📏 Profondeur adaptée.");
+ }else{
+  score+=4;
+  raisons.push("📏 Profondeur moins caractéristique.");
+ }
+
+ const courant=document.getElementById("courant").value;
+
+ if(profil.courant.includes(courant)){
+  score+=10;
+  raisons.push("🌊 Courant cohérent avec l'espèce.");
+ }else{
+  score+=4;
+  raisons.push("🌊 Courant moins favorable.");
+ }
+
+ const clarte=document.getElementById("clarte").value;
+
+ if(profil.clarte.includes(clarte)){
+  score+=5;
+  raisons.push("💧 Clarté intéressante.");
+ }else{
+  score+=2;
+  raisons.push("💧 Clarté moins idéale.");
+ }
+
+ const meteo=document.getElementById("meteo").value;
+
+ if(meteo==="nuageux"){
+  score+=5;
+  raisons.push("☁️ Ciel nuageux potentiellement intéressant.");
+ }else if(meteo==="pluie"){
+  score+=4;
+  raisons.push("🌧️ Pluie exploitable.");
+ }else if(meteo==="soleil"){
+  score+=3;
+  raisons.push("☀️ Soleil : adapte ta prospection.");
+ }else{
+  score+=1;
+  raisons.push("⛈️ Orage : prudence et conditions moins favorables.");
+ }
+
+ if(pression>=1005&&pression<=1020){
+  score+=5;
+  raisons.push("📊 Pression dans une zone relativement stable.");
+ }else{
+  score+=3;
+  raisons.push("📊 Pression moins intéressante.");
+ }
+
+ score=Math.min(100,Math.round(score));
+
+ afficherAnalyse(profil,score,raisons);
+}
+
+/* =====================================================
+ AFFICHAGE ANALYSE
+===================================================== */
+
+function afficherAnalyse(profil,score,raisons){
+
+ let niveau;
+
+ if(score>=85)niveau="🔥 Conditions excellentes";
+ else if(score>=70)niveau="🟢 Très bonnes conditions";
+ else if(score>=55)niveau="🟡 Conditions correctes";
+ else if(score>=40)niveau="🟠 Conditions moyennes";
+ else niveau="🔴 Conditions difficiles";
+
+ let html=`
+  <div class="card score-card">
+
+   <div class="score-label">SCORE FISH SENS</div>
+
+   <div class="score-ring" style="--score:${score}%">
+    <div class="score-number">${score}</div>
+   </div>
+
+   <h2>${niveau}</h2>
+   <p style="color:var(--muted)">${profil.nom}</p>
+
+  </div>
+
+  <div class="card">
+   <h2>🧠 Pourquoi ce score ?</h2>
+ `;
+
+ raisons.forEach(r=>{
+  html+=`<div class="reason">${r}</div>`;
+ });
+
+ html+=`
+  </div>
+
+  <div class="card">
+
+   <h2>🎯 Stratégie recommandée</h2>
+
+   <p><strong>📍 Zones à prospecter :</strong></p>
+
+   <div class="tags">
+    ${profil.zones.map(z=>`<span class="tag">📍 ${z}</span>`).join("")}
+   </div>
+
+   ${afficherLeurres(profil)}
+
+  </div>
+
+  <div class="card">
+
+   <h2>📊 Conditions analysées</h2>
+
+   <p>📍 <strong>Lieu :</strong>
+    ${escapeHTML(document.getElementById("lieu").value||"Non renseigné")}
+   </p>
+
+   <p>🌡️ <strong>Température :</strong>
+    ${document.getElementById("temperature").value||"--"} °C
+   </p>
+
+   <p>💨 <strong>Vent :</strong>
+    ${document.getElementById("vent").value||"--"} km/h
+   </p>
+
+   <p>📊 <strong>Pression :</strong>
+    ${document.getElementById("pression").value||"--"} hPa
+   </p>
+
+   <p>🌤️ <strong>Météo :</strong>
+    ${document.getElementById("meteo").value}
+   </p>
+
+   <p>💧 <strong>Eau :</strong>
+    ${document.getElementById("clarte").value}
+   </p>
+
+   <p>📏 <strong>Profondeur :</strong>
+    ${document.getElementById("profondeur").value}
+   </p>
+
+   <p>🌊 <strong>Courant :</strong>
+    ${document.getElementById("courant").value}
+   </p>
+
+  </div>
+ `;
+
+ document.getElementById("resultat").innerHTML=html;
+
+ document.getElementById("resultat").scrollIntoView({
+  behavior:"smooth"
+ });
+}
+
+/* =====================================================
+ LEURRES
+===================================================== */
+
+function afficherLeurres(profil){
+
+ let leurres=[...profil.leurres];
+
+ const clarte=document.getElementById("clarte").value;
+ const vent=Number(document.getElementById("vent").value);
+
+ leurres=leurres.map(l=>{
+
+  let score=50;
+  const nom=l.nom.toLowerCase();
+
+  if(
+   clarte==="trouble" &&
+   (nom.includes("shad")||
+    nom.includes("spinner")||
+    nom.includes("souple"))
+  )score+=15;
+
+  if(
+   clarte==="claire" &&
+   (nom.includes("finess")||
+    nom.includes("nageur")||
+    nom.includes("cuillère"))
+  )score+=12;
+
+  if(vent>20)score+=5;
+
+  return {...l,score};
+
+ }).sort((a,b)=>b.score-a.score);
+
+ return leurres.slice(0,3).map((l,i)=>`
+
+  <div class="lure">
+
+   <div class="lure-top">
+
+    <div class="lure-title">
+     ${["🥇","🥈","🥉"][i]} ${l.nom}
+    </div>
+
+    <div class="rank">
+     ${Math.min(99,l.score)}/100
+    </div>
+
+   </div>
+
+   <div class="tags">
+    <span class="tag">📏 ${l.taille}</span>
+    <span class="tag">🎨 ${l.couleur}</span>
+    <span class="tag">⚡ ${l.animation}</span>
+   </div>
+
+   <p>📍 <strong>Zone :</strong> ${l.zone}</p>
+
+   <div class="equipment">
+
+    <div class="equipment-title">
+     🛠️ Matériel recommandé
+    </div>
+
+    <p>🎣 <strong>Canne :</strong> ${l.canne}</p>
+    <p>⚖️ <strong>Grammage :</strong> ${l.grammage}</p>
+    <p>⚙️ <strong>Moulinet :</strong> ${l.moulinet}</p>
+    <p>🧵 <strong>Ligne :</strong> ${l.ligne}</p>
+    <p>🪢 <strong>Bas de ligne :</strong> ${l.bas}</p>
+
+    ${compatibilite(l.canne)}
+
+   </div>
+
+  </div>
+
+ `).join("");
+}
+
+function compatibilite(recommande){
+
+ const choix=document.getElementById("puissanceCanne").value;
+
+ if(!choix){
+  return`
+   <div class="reason">
+    🎣 Sélectionne ta puissance de canne
+    pour obtenir une comparaison.
+   </div>
+  `;
+ }
+
+ const c=choix.match(/\d+/g);
+ const min=Number(c[0]);
+ const max=Number(c[1]);
+
+ const r=recommande.match(/\d+/g);
+
+ if(!r)return"";
+
+ const rmin=Number(r[0]);
+ const rmax=Number(r[1]);
+
+ let message;
+ let classe;
+
+ if(min<=rmin&&max>=rmax){
+  message="🟢 Très bonne compatibilité";
+  classe="success";
+ }else if(max>=rmin&&min<=rmax){
+  message="🟡 Compatibilité partielle";
+  classe="";
+ }else{
+  message="🔴 Puissance peu adaptée";
+  classe="error";
+ }
+
+ return`
+  <div class="reason ${classe}">
+   ${message}
+   <br>
+   <small>
+    Ta canne : ${min}–${max} g
+    · Recommandation : ${rmin}–${rmax} g
+   </small>
+  </div>
+ `;
+}
+
+/* =====================================================
+ PREVISIONS 24 H
+===================================================== */
+
+async function previsions(){
+
+ if(latitude===null){
+  alert("📍 Utilise d'abord ta localisation.");
+  localiser();
+  return;
+ }
+
+ const profil=poissons[document.getElementById("poisson").value];
+ const resultat=document.getElementById("resultat");
+
+ resultat.innerHTML=`
+  <div class="card">
+   <h2>🔮 Chargement des prévisions...</h2>
+   <p class="status">Analyse des prochaines 24 heures.</p>
+  </div>
+ `;
+
+ try{
+
+  const url=
+   "https://api.open-meteo.com/v1/forecast"+
+   "?latitude="+encodeURIComponent(latitude)+
+   "&longitude="+encodeURIComponent(longitude)+
+   "&hourly=temperature_2m,precipitation,cloud_cover,pressure_msl,wind_speed_10m,wind_gusts_10m"+
+   "&forecast_hours=24"+
+   "&timezone=auto";
+
+  const response=await fetch(url);
+  if(!response.ok)throw new Error();
+
+  const data=await response.json();
+  const h=data.hourly;
+  const rows=[];
+
+  for(let i=0;i<h.time.length;i++){
+
+   const date=new Date(h.time[i]);
+   const hour=date.getHours();
+
+   let m;
+
+   if(hour>=5&&hour<11)m="matin";
+   else if(hour>=11&&hour<18)m="journee";
+   else if(hour>=18&&hour<23)m="soir";
+   else m="nuit";
+
+   let score=50;
+
+   const temp=h.temperature_2m[i];
+   const wind=h.wind_speed_10m[i];
+   const pressure=h.pressure_msl[i];
+   const clouds=h.cloud_cover[i];
+   const rain=h.precipitation[i];
+   const gust=h.wind_gusts_10m[i];
+
+   if(temp>=profil.temp[0]&&temp<=profil.temp[1])
+    score+=20;
+   else if(temp>=profil.temp[0]-4&&temp<=profil.temp[1]+5)
+    score+=10;
+   else score-=8;
+
+   if(profil.moments.includes(m))score+=12;
+
+   if(wind>=3&&wind<=25)score+=8;
+   else if(wind<=35)score+=4;
+   else score-=8;
+
+   if(pressure>=1005&&pressure<=1020)score+=7;
+   else if(pressure>=995&&pressure<=1030)score+=3;
+   else score-=5;
+
+   if(clouds>=30&&clouds<=80)score+=4;
+   if(rain>0&&rain<=5)score+=2;
+   if(rain>10)score-=4;
+   if(gust>45)score-=8;
+
+   score=Math.max(0,Math.min(100,Math.round(score)));
+
+   rows.push({
+    date,score,temp,wind,pressure,clouds,rain,gust
+   });
+  }
+
+  const best=[...rows].sort((a,b)=>b.score-a.score)[0];
+
+  resultat.innerHTML=`
+
+   <div class="card">
+
+    <h2>🔮 Prévisions pêche — 24 h</h2>
+
+    <p style="color:var(--muted)">
+     ${profil.nom} ·
+     ${escapeHTML(
+      document.getElementById("lieu").value||
+      "Position actuelle"
+     )}
+    </p>
+
+    <div class="forecast best">
+
+     <div class="forecast-time">
+      🏆 Meilleur créneau :
+      ${formatHour(best.date)}
+     </div>
+
+     <br>
+
+     🎣 <strong>${best.score}/100</strong>
+     · 🌡️ ${Math.round(best.temp)} °C
+     · 💨 ${Math.round(best.wind)} km/h
+
+     <br>
+
+     📊 ${Math.round(best.pressure)} hPa
+     · ☁️ ${Math.round(best.clouds)}%
+     · 🌧️ ${best.rain.toFixed(1)} mm
+
+    </div>
+
+    <h3>📅 Heure par heure</h3>
+
+    ${rows.map(r=>`
+
+     <div class="forecast ${r.score>=75?"best":""}">
+
+      <div class="forecast-time">
+       ${formatHour(r.date)}
+       — 🎣 ${r.score}/100
+      </div>
+
+      <br>
+
+      🌡️ ${Math.round(r.temp)} °C
+      · 💨 ${Math.round(r.wind)} km/h
+      · 💨 Rafales ${Math.round(r.gust)} km/h
+
+      <br>
+
+      📊 ${Math.round(r.pressure)} hPa
+      · ☁️ ${Math.round(r.clouds)}%
+      · 🌧️ ${r.rain.toFixed(1)} mm
+
+     </div>
+
+    `).join("")}
+
+    <p style="color:var(--muted)">
+     Ces scores sont des estimations et ne garantissent
+     évidemment pas une capture.
+    </p>
+
+   </div>
+  `;
+
+  resultat.scrollIntoView({behavior:"smooth"});
+
+ }catch(e){
+
+  resultat.innerHTML=`
+   <div class="card">
+    <h2>❌ Prévisions indisponibles</h2>
+    <p style="color:var(--muted)">
+     Vérifie ta connexion internet et réessaie.
+    </p>
+   </div>
+  `;
+ }
+}
+
+function formatHour(date){
+ return date.toLocaleString("fr-FR",{
+  weekday:"short",
+  day:"2-digit",
+  hour:"2-digit",
+  minute:"2-digit"
+ });
+}
+
+/* =====================================================
+ CARNET + PHOTOS
+===================================================== */
+
+let nouvellePhoto=null;
+
+/*
+  Compression de l'image :
+  les photos de téléphone peuvent être énormes.
+  On les réduit avant de les sauvegarder dans localStorage.
+*/
+function compresserImage(file){
+
+ return new Promise((resolve,reject)=>{
+
+  const reader=new FileReader();
+
+  reader.onload=e=>{
+
+   const img=new Image();
+
+   img.onload=()=>{
+
+    const max=1100;
+
+    let width=img.width;
+    let height=img.height;
+
+    if(width>height){
+     if(width>max){
+      height=Math.round(height*max/width);
+      width=max;
+     }
+    }else{
+     if(height>max){
+      width=Math.round(width*max/height);
+      height=max;
+     }
+    }
+
+    const canvas=document.createElement("canvas");
+
+    canvas.width=width;
+    canvas.height=height;
+
+    const ctx=canvas.getContext("2d");
+
+    ctx.drawImage(img,0,0,width,height);
+
+    resolve(
+     canvas.toDataURL("image/jpeg",.78)
+    );
+   };
+
+   img.onerror=reject;
+   img.src=e.target.result;
+  };
+
+  reader.onerror=reject;
+  reader.readAsDataURL(file);
+ });
+}
+
+async function previsualiserPhoto(event){
+
+ const file=event.target.files[0];
+
+ if(!file){
+  retirerPhoto();
+  return;
+ }
+
+ if(!file.type.startsWith("image/")){
+  alert("❌ Choisis une image.");
+  retirerPhoto();
+  return;
+ }
+
+ try{
+
+  nouvellePhoto=await compresserImage(file);
+
+  document.getElementById("photoPreviewImg").src=
+   nouvellePhoto;
+
+  document.getElementById("photoPreview").style.display=
+   "block";
+
+ }catch(e){
+
+  alert("❌ Impossible de charger cette photo.");
+  retirerPhoto();
+ }
+}
+
+function retirerPhoto(){
+
+ nouvellePhoto=null;
+
+ const input=document.getElementById("prisePhoto");
+
+ if(input)input.value="";
+
+ document.getElementById("photoPreview").style.display="none";
+ document.getElementById("photoPreviewImg").src="";
+}
+
+function ajouterPrise(){
+
+ const poisson=
+  document.getElementById("prisePoisson").value.trim();
+
+ const taille=
+  document.getElementById("priseTaille").value;
+
+ const note=
+  document.getElementById("priseNote").value.trim();
+
+ if(!poisson){
+  alert("Indique au moins l'espèce.");
+  return;
+ }
+
+ const catches=getCatches();
+
+ catches.unshift({
+
+  poisson,
+  taille,
+  note,
+
+  photo:nouvellePhoto||null,
+
+  date:new Date().toLocaleString("fr-FR")
+ });
+
+ try{
+
+  saveCatches(catches);
+
+ }catch(e){
+
+  alert(
+   "❌ Impossible de sauvegarder la prise. "+
+   "La photo est peut-être trop volumineuse."
+  );
+
+  return;
+ }
+
+ document.getElementById("prisePoisson").value="";
+ document.getElementById("priseTaille").value="";
+ document.getElementById("priseNote").value="";
+
+ retirerPhoto();
+
+ afficherCarnet();
+}
+
+function getCatches(){
+
+ try{
+
+  return JSON.parse(
+   localStorage.getItem("fishsens_catches")||"[]"
+  );
+
+ }catch{
+
+  return[];
+ }
+}
+
+function saveCatches(data){
+
+ localStorage.setItem(
+  "fishsens_catches",
+  JSON.stringify(data)
+ );
+}
+
+function afficherCarnet(){
+
+ const list=document.getElementById("catchList");
+ const catches=getCatches();
+
+ if(!catches.length){
+
+  list.innerHTML=`
+   <p style="color:var(--muted)">
+    Aucune prise enregistrée pour le moment.
+   </p>
+  `;
+
+  return;
+ }
+
+ list.innerHTML=catches.map((c,i)=>`
+
+  <div class="catch">
+
+   <div class="catch-left">
+
+    ${
+     c.photo
+     ?
+     `<img
+       class="catch-photo"
+       src="${c.photo}"
+       alt="Photo de ${escapeHTML(c.poisson)}"
+       onclick="openImageViewer('${escapeAttr(c.photo)}')"
+      >`
+     :
+     `<div
+       class="catch-photo"
+       style="display:grid;place-items:center;cursor:default"
+      >
+       🎣
+      </div>`
+    }
+
+    <div class="catch-info">
+
+     <strong>
+      🐟 ${escapeHTML(c.poisson)}
+     </strong>
+
+     ${
+      c.taille
+      ?
+      `<br>📏 ${escapeHTML(c.taille)} cm`
+      :
+      ""
+     }
+
+     ${
+      c.note
+      ?
+      `<br><small>${escapeHTML(c.note)}</small>`
+      :
+      ""
+     }
+
+     <br>
+     <small>${escapeHTML(c.date)}</small>
+
+    </div>
+
+   </div>
+
+   <button
+    class="close danger"
+    onclick="supprimerPrise(${i})"
+   >
+    🗑️
+   </button>
+
+  </div>
+
+ `).join("");
+}
+
+function supprimerPrise(index){
+
+ const catches=getCatches();
+
+ catches.splice(index,1);
+
+ saveCatches(catches);
+
+ afficherCarnet();
+}
+
+/* =====================================================
+ VISIONNEUSE PHOTO
+===================================================== */
+
+function escapeAttr(value){
+ return String(value)
+  .replaceAll("&","&amp;")
+  .replaceAll("'","&#039;")
+  .replaceAll('"',"&quot;");
+}
+
+function openImageViewer(src){
+
+ const viewer=document.getElementById("imageViewer");
+ const image=document.getElementById("fullImage");
+
+ image.src=src;
+ viewer.style.display="flex";
+
+ document.body.style.overflow="hidden";
+}
+
+function closeImageViewer(event){
+
+ if(event && event.target &&
+    event.target.id!=="imageViewer" &&
+    !event.target.classList.contains("image-close")){
+  return;
+ }
+
+ document.getElementById("imageViewer").style.display="none";
+ document.getElementById("fullImage").src="";
+
+ document.body.style.overflow="";
+}
+
+/* =====================================================
+ MODALES
+===================================================== */
+
+function openModal(type){
+
+ const modal=document.getElementById("modal");
+ const title=document.getElementById("modalTitle");
+ const content=document.getElementById("modalContent");
+
+ if(type==="fonctionnement"){
+
+  title.textContent="Comment fonctionne Fish Sens ?";
+
+  content.innerHTML=`
+
+   <p>
+    Fish Sens rassemble les informations disponibles
+    sur ta session : espèce, météo, moment, milieu,
+    profondeur, courant et matériel.
+   </p>
+
+   <p>
+    Ces données servent ensuite à calculer un score
+    indicatif et à proposer des stratégies adaptées.
+   </p>
+
+   <h3>1️⃣ Position</h3>
+   <p>
+    Si tu l'autorises, le navigateur fournit tes
+    coordonnées GPS au site.
+   </p>
+
+   <h3>2️⃣ Météo</h3>
+   <p>
+    Les conditions météo sont récupérées depuis
+    les coordonnées disponibles.
+   </p>
+
+   <h3>3️⃣ Analyse</h3>
+   <p>
+    Fish Sens compare les conditions avec le profil
+    de l'espèce sélectionnée.
+   </p>
+
+   <h3>4️⃣ Stratégie</h3>
+   <p>
+    Tu obtiens des idées de leurres, zones,
+    animations et matériel.
+   </p>
+
+   <h3>5️⃣ Carnet</h3>
+   <p>
+    Tu peux enregistrer tes prises avec leur taille,
+    une note et maintenant une photo.
+   </p>
+  `;
+
+ }else{
+
+  title.textContent="Aide";
+
+  content.innerHTML=`
+
+   <h3>📍 La localisation ne marche pas ?</h3>
+
+   <p>
+    Vérifie que ton navigateur a l'autorisation
+    d'utiliser la localisation.
+   </p>
+
+   <h3>🌦️ La météo ne s'affiche pas ?</h3>
+
+   <p>
+    Vérifie ta connexion internet puis relance
+    la récupération météo.
+   </p>
+
+   <h3>📸 Comment ajouter une photo ?</h3>
+
+   <p>
+    Sur téléphone, appuie sur le bouton de sélection
+    d'image. Ton téléphone pourra proposer la caméra
+    ou ta galerie. Sur ordinateur, tu pourras choisir
+    une image parmi tes fichiers.
+   </p>
+
+   <h3>🎣 Le score est-il garanti ?</h3>
+
+   <p>
+    Non. Le comportement des poissons dépend
+    de nombreux facteurs locaux qui ne peuvent
+    pas être parfaitement prédits.
+   </p>
+  `;
+ }
+
+ modal.style.display="block";
+}
+
+function closeModal(){
+ document.getElementById("modal").style.display="none";
+}
+
+document.getElementById("modal").addEventListener(
+ "click",
+ e=>{
+  if(e.target.id==="modal")closeModal();
+ }
+);
+
+/* =====================================================
+ SECURITE HTML
+===================================================== */
+
+function escapeHTML(value){
+
+ return String(value)
+  .replaceAll("&","&amp;")
+  .replaceAll("<","&lt;")
+  .replaceAll(">","&gt;")
+  .replaceAll('"',"&quot;")
+  .replaceAll("'","&#039;");
+}
+
+/* =====================================================
+ SAUVEGARDE PARAMETRES
+===================================================== */
+
+const fields=[
+ "lieu",
+ "spot",
+ "clarte",
+ "profondeur",
+ "courant",
+ "temperature",
+ "vent",
+ "pression",
+ "meteo",
+ "poisson",
+ "puissanceCanne"
+];
+
+fields.forEach(id=>{
+
+ const element=document.getElementById(id);
+
+ if(!element)return;
+
+ const saved=localStorage.getItem("fishsens_"+id);
+
+ if(saved!==null){
+  element.value=saved;
+ }
+
+ element.addEventListener("change",()=>{
+  localStorage.setItem(
+   "fishsens_"+id,
+   element.value
+  );
+ });
+});
+
+/* =====================================================
+ ESC
+===================================================== */
+
+document.addEventListener("keydown",e=>{
+
+ if(e.key==="Escape"){
+
+  closeModal();
+
+  const viewer=document.getElementById("imageViewer");
+
+  if(viewer.style.display==="flex"){
+   closeImageViewer();
+  }
+ }
+});
+
+/* =====================================================
+ INITIALISATION
+===================================================== */
+
+afficherCarnet();
+
+</script>
+
+</body>
+</html>
